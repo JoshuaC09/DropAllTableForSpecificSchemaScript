@@ -1,7 +1,9 @@
 -- Drop sequence first
-DECLARE @dropSequence NVARCHAR(MAX) = '';
-SELECT @dropSequence = 'DROP SEQUENCE IF EXISTS core.EmployeeCodeSequence;';
-EXEC sp_executesql @dropSequence;
+DECLARE @dropSequences NVARCHAR(MAX) = '';
+SELECT @dropSequences += 'DROP SEQUENCE ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(name) + ';'
+FROM sys.sequences
+WHERE SCHEMA_NAME(schema_id) = 'core';
+EXEC sp_executesql @dropSequences;
 
 -- Then your existing code to drop FKs and tables
 DECLARE @sql NVARCHAR(MAX) = '';
